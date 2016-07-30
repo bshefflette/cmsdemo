@@ -1,37 +1,27 @@
 <?php require_once("../includes/db_connection.php"); ?>
 <?php require_once("../includes/functions.php"); ?>
-	<?php 
-	// 2. Perform database query
-	$query = "SELECT * ";
-	$query .= "FROM subjects ";
-	$query .= "WHERE visible = 1 ";
-	$query .= "ORDER BY position ASC";
-
-	$result = mysqli_query($db, $query);
-	confirm_query($result);
-	?>
 <?php include("../includes/layouts/header.php"); ?>
-
+<?php
+	if (isset($_GET["subject"])) {
+		$selected_subject_id = $_GET["subject"];
+		$selected_page_id = null;
+	}	elseif (isset($_GET["page"])) {
+		$selected_page_id = $_GET["page"];
+		$selected_subject_id = null;
+	} else {
+		$selected_page_id = null;
+		$selected_subject_id = null;
+	}
+	?>
 	<div id="main">
 		<div id="navigation">
-			<ul class="subjects">
-			<?php
-			//3. Use returned data (if any)
-				while($subject = mysqli_fetch_assoc($result)) {
-			?>
-			<li><?php echo $subject["menu_name"] . " (" . $subject["id"] . ")"; ?></li>
-			<?php
-				}
-			?>
-			</ul>
+			<?php echo navigation($selected_subject_id, $selected_page_id); ?>
 		</div>
 		<div id="page">
 			<h2>Manage Content</h2>
-
+			<?php echo $selected_subject_id;?><br />
+			<?php echo $selected_page_id;?><br />
 		</div>
 	</div>
-	<?php
-	// 4. Release returned data
-		mysqli_free_result($result);
-	?>	
+	<?php mysqli_free_result($subject_set); ?>	
 <?php include("../includes/layouts/footer.php"); ?>
