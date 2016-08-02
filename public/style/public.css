@@ -59,7 +59,17 @@ ul.pages { padding-left: 2em; list-style: square; font-weight: normal;}
 }
 #page h2 { color: #8D0D19; margin-top: 1em;}
 #page h3 { color: #8D0D19; }
-.message {
+.view-content{
+	margin: 1em; padding: 1em; border: 1px solid #999;
+}
+div.message {
 	color: #8D0D19; border: 3px solid #8D0D19; padding: 10px;
 	font-size: 1.35em; font-weight: 700; margin: 20px 0px;
 }
+
+/* errors */
+.error{
+	color: #8d0d19; border: 2px solid #8d0d19;
+	margin: 1em 0; padding: 1em; font-weight: 700;
+}
+.error ul { padding-left: 2em; }

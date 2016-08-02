@@ -89,7 +89,7 @@
 			$current_subject = null;
 			$current_page = null;
 		}
-}
+	}
 
 	function navigation($subject_array, $page_array) {
 		$output = "<ul class=\"subjects\">";
@@ -103,7 +103,7 @@
 				$output .=	"<a href=\"manage_content.php?subject="; 
 				$output .=	urlencode($subject["id"]);
 				$output .=	"\">";
-				$output .=	$subject["menu_name"]; 
+				$output .=	htmlentities($subject["menu_name"]); 
 				$output .=	"</a>";
 				$page_set = find_pages_for_subject($subject['id']);
 				$output .=	"<ul class=\"pages\">";
@@ -117,7 +117,7 @@
 				$output .=	"<a href=\"manage_content.php?page=";
 				$output .=	urlencode($page["id"]); 
 				$output .=	"\">";
-				$output .= $page["menu_name"]; 
+				$output .= htmlentities($page["menu_name"]); 
 				$output .=	"</a></li>";
 				}
 				mysqli_free_result($page_set); 	
@@ -130,19 +130,21 @@
 	}
 
 	function form_errors($errors=array()) {
-	$output = "";
+		$output = "";
 
-	if(!empty($errors)) {
-		$output .= "<div class=\"error\">";
-		$output .= "Please fix the following errors:";
-		$output .= "<ul>";
-		foreach ($errors as $key => $error) {
-			$output .= "<li>{$error}</li>";
+		if(!empty($errors)) {
+			$output .= "<div class=\"error\">";
+			$output .= "Please fix the following errors:";
+			$output .= "<ul>";
+			foreach ($errors as $key => $error) {
+				$output .= "<li>";
+				$output .= htmlentities($error);
+				$output .= "</li>";
+			}
+			$output .= "</ul>";
+			$output .= "</div>";	
 		}
-		$output .= "</ul>";
-		$output .= "</div>";	
+		return $output;
 	}
-	return $output;
-}
 
 ?>
