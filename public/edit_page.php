@@ -5,7 +5,7 @@
 <?php find_selected_page(); ?>
 
 <?php
-	if (!$current_subject) {
+	if (!$current_page) {
 		// subject ID was missing or invalid or couldnt be found in db
 		redirect_to("manage_content.php");
 	}
@@ -14,7 +14,7 @@
 <?php
 if (isset ($_POST['submit'])){
 	//validations
-	$required_fields = array("menu_name", "position", "visible");
+	$required_fields = array("menu_name", "position", "visible", "content");
 	validate_presences($required_fields);
 	$fields_with_max_lengths = array("menu_name"
 		 => 30);
@@ -25,15 +25,17 @@ if (isset ($_POST['submit'])){
 
 			// Perform Update
 		
-		$id = $current_subject["id"];
+		$id = $current_page["id"];
 		$menu_name = mysql_prep($_POST["menu_name"]);
 		$position = (int) $_POST["position"];
 		$visible = (int) $_POST["visible"];
+		$content = mysql_prep($_POST["content"]);
 
-		$query = "UPDATE subjects SET ";
+		$query = "UPDATE pages SET ";
 		$query .= "menu_name = '{$menu_name}', ";
 		$query .= "position = {$position}, ";
-		$query .= "visible = {$visible} ";
+		$query .= "visible = {$visible}, ";
+		$query .= "content = '{$content}' ";
 		$query .= "WHERE id = {$id} ";
 		$query .= "LIMIT 1";
 
@@ -42,10 +44,10 @@ if (isset ($_POST['submit'])){
 		if($result && (mysqli_affected_rows($db) >= 0)) {
 			// Success
 			// redirect_to("somepage.php");
-			$_SESSION["message"] = "Subject updated.";
+			$_SESSION["message"] = "Page updated.";
 			redirect_to("manage_content.php");
 		} else {
-			$message = "Subject update failed.";
+			$message = "Page update failed.";
 		}
 	} 
 }else{
@@ -65,19 +67,19 @@ if (isset ($_POST['submit'])){
 			} ?>
 		<?php echo form_errors($errors); ?>
 
-		<h2>Edit Subject: <?php echo htmlentities($current_subject["menu_name"]); ?></h2>
-		<form action="edit_subject.php?subject=<?php echo urlencode($current_subject["id"]); ?>" method="post">
+		<h2>Edit Page: <?php echo htmlentities($current_page["menu_name"]); ?></h2>
+		<form action="edit_page.php?page=<?php echo urlencode($current_page["id"]); ?>" method="post">
 		  <p>Menu name:
-		    <input type="text" name="menu_name" value="<?php echo htmlentities($current_subject["menu_name"]); ?>" />
+		    <input type="text" name="menu_name" value="<?php echo htmlentities($current_page["menu_name"]); ?>" />
 		  </p>
 		  <p>Position:
 		    <select name="position">
 				<?php
-					$subject_set = find_all_subjects(false);
-					$subject_count = mysqli_num_rows($subject_set);
-					for($count=1; $count <= $subject_count; $count++){
+					$page_set = find_pages_for_subject($current_page["subject_id"]);
+					$page_count = mysqli_num_rows($page_set);
+					for($count=1; $count <= $page_count; $count++){
 						echo "<option value=\"{$count}\"";
-						if ($current_subject["position"] == $count){
+						if ($current_page["position"] == $count){
 						echo " selected";
 					}
 						echo ">{$count}</option>";
@@ -86,21 +88,24 @@ if (isset ($_POST['submit'])){
 		    </select>
 		  </p>
 		  <p>Visible:
-		    <input type="radio" name="visible" value="0" <?php if($current_subject["visible"] == 0){
+		    <input type="radio" name="visible" value="0" <?php if($current_page["visible"] == 0){
 		    	echo "checked";
 		    } ?> /> No
 		    &nbsp;
-		    <input type="radio" name="visible" value="1" <?php if($current_subject["visible"] == 1){
+		    <input type="radio" name="visible" value="1" <?php if($current_page["visible"] == 1){
 		    	echo "checked";
 		    }?>/> Yes
 		  </p>
-		  <input type="submit" name="submit" value="Edit Subject" />
+		  <p>Content:
+		  	<textarea name="content" rows="20" cols="80"><?php echo htmlentities($current_page["content"]); ?></textarea>
+		  </p>
+		  <input type="submit" name="submit" value="Edit Page" />
 		</form>
 		<br />
-		<a href="manage_content.php">Cancel</a>
+		<a href="manage_content.php?page=<?php echo urlencode($current_page["id"]);?>">Cancel</a>
 		&nbsp;
 		&nbsp;
-		<a href="delete_subject.php?subject=<?php echo urlencode($current_subject["id"]); ?>" onclick="return confirm('Are you sure?');">Delete Subject</a>
+		<a href="delete_page.php?page=<?php echo urlencode($current_page["id"]); ?>" onclick="return confirm('Are you sure?');">Delete Page</a>
 		</div>
 	</div>
 
