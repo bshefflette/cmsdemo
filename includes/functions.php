@@ -29,6 +29,62 @@
 		return $subject_set;
 	}
 
+	function find_all_admins(){
+		global $db;
+		$query = "SELECT * ";
+		$query .= "FROM admins ";
+		$query .= "ORDER BY id ASC";
+		$admin_set = mysqli_query($db, $query);
+		confirm_query($admin_set);
+		return $admin_set;
+	}
+
+	function list_admins_by_id(){
+		$output = "<ul class=\"adminusername\"><li>Username</li>";
+			$admin_set = find_all_admins();
+			while($admin = mysqli_fetch_assoc($admin_set)){
+				$output .= "<li>";
+				$output .= htmlentities($admin["username"]);
+				$output .= "</li>";
+			}
+			
+			$output .= "</ul>";
+			$output .= "<ul class=\"adminactions\"><li>Actions</li>";
+			$admin_set = find_all_admins();
+			while($adminz = mysqli_fetch_assoc($admin_set)){
+				$output .= "<li>";
+				$output .= "<a href=\"edit_admin.php?admin=";
+				$output .= htmlentities($adminz["id"]);
+				$output .= "\">Edit</a>";
+				$output .= "&nbsp;&nbsp;";
+				$output .= "<a href=\"delete_admin.php?admin=";
+				$output .= htmlentities($adminz["id"]);
+				$output .= "\" onclick=\"return confirm('Are you sure?')\">Delete</a>";
+				$output .= "</li>";
+			}
+			$output .= "</ul>";
+			mysqli_free_result($admin_set);
+			return $output;
+	}
+
+	function find_admin_by_id($admin_id){
+		global $db;
+		$admin_set = find_all_admins();
+
+		$safe_admin_id = mysqli_real_escape_string($db, $admin_id);
+
+		$query = "SELECT * ";
+		$query .= "FROM admins ";
+		$query .= "WHERE id = {$safe_admin_id} ";
+		$query .= "LIMIT 1";
+		$admin_set = mysqli_query($db, $query);
+		confirm_query($admin_set);
+		if ($admin = mysqli_fetch_assoc($admin_set)) {
+		return $admin;
+		} else {
+			return null;
+		}
+	}
 	function find_pages_for_subject($subject_id, $public=true) {
 		global $db;
 		$safe_subject_id = mysqli_real_escape_string($db, $subject_id);

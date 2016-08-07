@@ -73,3 +73,14 @@ div.message {
 	margin: 1em 0; padding: 1em; font-weight: 700;
 }
 .error ul { padding-left: 2em; }
+/* admins */
+.adminusername{
+	margin: 1em 0; padding: 0 10em 0 0; display: inline-block; list-style: none; color: #1A446C; font-size: 1em;
+}
+.adminusername li { padding-bottom: 5px; }
+.adminusername li:first-child{ font-weight: 600; font-size: 1.15em; }
+.adminactions{
+	margin: 1em 0; padding: 0; display: inline-block; list-style: none; color: #1A446C; font-size: 1em;
+}
+.adminactions li { padding-bottom: 5px; }
+.adminactions li:first-child{ font-weight: 600; font-size: 1.15em; }
