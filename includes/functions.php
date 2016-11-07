@@ -39,6 +39,60 @@
 		return $admin_set;
 	}
 
+	function password_encrypt(){
+		$hash_format = "$2y$10$"; // Tells PHP to use blowfish with a cost of 10
+		$salt_length = 22; // blowfish salts should be 22-chars or more
+		$salt = generate_salt($salt_length);
+		$format_and_salt = $hash_format . $salt;
+		$hash = crypt($password, $format_and_salt);
+		return $hash;
+	}
+
+	function generate_salt($length){
+		$unique_random_string = md5(uniqid(mt_rand(), true));
+		//not 100% unique or random but returns 32-chars from md5
+
+		$base64_string = base64_encode($unique_random_string);
+		//valid chars for a salt are [a-zA-Z0-9./]
+
+		$modified_base64_string = str_replace('+', '.', $base64_string);
+		//but not '+' which is valid in base64 encoding
+
+		$salt = substr($modified_base64_string, 0, $length);
+
+		return $salt;
+	}
+
+
+	function attempt_login($username, $password) {
+		$admin = find_admin_by_username($username);
+		if ($admin) {
+			
+			//found admin, now check password
+			if (password_verify($password, $admin["hashed_password"])) {
+				// password matches
+				return $admin;
+			} else {
+				//password does not match
+				return false;
+			}
+		} else {
+			//admin not found
+			return false;
+		}
+
+	}
+
+	function confirm_logged_in() {
+		if(!logged_in()) {
+		redirect_to("login.php");
+		}
+	}
+
+	function logged_in(){
+		return isset($_SESSION['admin_id']);
+	}
+
 	function list_admins_by_id(){
 		$output = "<ul class=\"adminusername\"><li>Username</li>";
 			$admin_set = find_all_admins();
@@ -54,11 +108,11 @@
 			while($adminz = mysqli_fetch_assoc($admin_set)){
 				$output .= "<li>";
 				$output .= "<a href=\"edit_admin.php?admin=";
-				$output .= htmlentities($adminz["id"]);
+				$output .= urlencode($adminz["id"]);
 				$output .= "\">Edit</a>";
 				$output .= "&nbsp;&nbsp;";
 				$output .= "<a href=\"delete_admin.php?admin=";
-				$output .= htmlentities($adminz["id"]);
+				$output .= urlencode($adminz["id"]);
 				$output .= "\" onclick=\"return confirm('Are you sure?')\">Delete</a>";
 				$output .= "</li>";
 			}
@@ -81,6 +135,24 @@
 		confirm_query($admin_set);
 		if ($admin = mysqli_fetch_assoc($admin_set)) {
 		return $admin;
+		} else {
+			return null;
+		}
+	}
+
+	function find_admin_by_username($username){
+		global $db;
+
+		$safe_username = mysqli_real_escape_string($db, $username);
+
+		$query = "SELECT * ";
+		$query .= "FROM admins ";
+		$query .= "WHERE username = '{$safe_username}' ";
+		$query .= "LIMIT 1";
+		$az = mysqli_query($db, $query);
+		confirm_query($az);
+		if ($adminz = mysqli_fetch_assoc($az)) {
+		return $adminz;
 		} else {
 			return null;
 		}

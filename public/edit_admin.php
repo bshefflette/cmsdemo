@@ -12,10 +12,10 @@
 <?php
 if (isset ($_POST['submit'])){
 	//validations
-	$required_fields = array("username", "hashed_password");
+	$required_fields = array("username", "password");
 	validate_presences($required_fields);
 	$fields_with_max_lengths = array("username"
-		 => 30, "hashed_password" => 30);
+		 => 30, "password" => 60);
 	validate_max_lengths($fields_with_max_lengths);	
 
 
@@ -25,11 +25,11 @@ if (isset ($_POST['submit'])){
 		
 		$id = $current_admin["id"];
 		$username = mysql_prep($_POST["username"]);
-		$password = mysql_prep($_POST["hashed_password"]);
+		$hashed_password = password_hash($_POST["password"], PASSWORD_BCRYPT, ['cost' => 10]);
 
 		$query = "UPDATE admins SET ";
 		$query .= "username = '{$username}', ";
-		$query .= "hashed_password = '{$password}' ";
+		$query .= "hashed_password = '{$hashed_password}' ";
 		$query .= "WHERE id = {$id} ";
 		$query .= "LIMIT 1";
 
@@ -66,7 +66,7 @@ if (isset ($_POST['submit'])){
 		    <input type="text" name="username" value="<?php echo htmlentities($current_admin["username"]); ?>" />
 		  </p>
 		  <p>Password:
-		    <input type="password" name="hashed_password" value="<?php echo htmlentities($current_admin["hashed_password"]); ?>" />
+		    <input type="password" name="password" value="<?php echo htmlentities($current_admin["hashed_password"]); ?>" />
 		  </p>
 		  <input type="submit" name="submit" value="Edit Admin" />
 		</form>

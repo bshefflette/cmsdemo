@@ -6,6 +6,7 @@
 <?php find_all_admins(); ?>
 	<div id="main">
 		<div id="navigation">
+			<br /><a href="admin.php">&laquo; Main Menu</a>
 		</div>
 		<div id="page">
 			<?php echo message(); ?>
@@ -16,8 +17,8 @@
 				?>
 				<br /><br /><hr style="border: 1px solid #8D0D19;"/><br />
 				<a href="new_admin.php">+ Add new admin</a>
-				<br /><br />
-				<a href="admin.php">&laquo; Main Menu</a>
+				<br />
+				
 		</div>
 	</div>
 

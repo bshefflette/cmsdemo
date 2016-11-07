@@ -5,7 +5,7 @@
 <?php
 if (isset ($_POST['submit'])){
 	$username = mysql_prep($_POST["username"]);
-	$password = mysql_prep($_POST["password"]);
+	$hashed_password = password_hash($_POST["password"], PASSWORD_BCRYPT, ['cost' => 10]);
 
 	//validations
 	$required_fields = array("username", "password");
@@ -23,7 +23,7 @@ if (isset ($_POST['submit'])){
 	$query = "INSERT INTO admins (";
 	$query .= " username, hashed_password ";
 	$query .= ") VALUES (";
-	$query .= " '{$username}', '{$password}'";
+	$query .= " '{$username}', '{$hashed_password}'";
 	$query .= ")";
 
 	$result = mysqli_query($db, $query);

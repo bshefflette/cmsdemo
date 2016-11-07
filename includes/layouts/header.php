@@ -2,6 +2,9 @@
 	if (!isset($layout_context)) {
 		$layout_context = "public";
 	}
+	if ($layout_context !== "public") {
+		confirm_logged_in();
+	}
 	?>
 <!DOCTYPE html>
 <html>
